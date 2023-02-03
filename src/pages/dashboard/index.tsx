@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { styled, createTheme, ThemeProvider } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 import MuiDrawer from '@mui/material/Drawer';
@@ -18,12 +19,10 @@ import MenuIcon from '@mui/icons-material/Menu';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import NotificationsIcon from '@mui/icons-material/Notifications';
 import { mainListItems, secondaryListItems } from './components/ListItems';
-import { render } from 'react-dom';
-import brace from 'brace';
-import AceEditor from 'react-ace';
+import AceEditor from 'react-ace'
 
-import 'brace/mode/java';
-import 'brace/theme/github';
+import 'ace-builds/src-noconflict/mode-javascript'
+import 'ace-builds/src-noconflict/theme-monokai'
 
 function Copyright(props: any) {
   return (
@@ -85,7 +84,7 @@ const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' 
         },
       }),
     },
-  })
+  }),
 );
 
 const mdTheme = createTheme();
@@ -96,8 +95,18 @@ function DashboardContent() {
     setOpen(!open);
   };
 
-  function onChange(newValue:any) {
-    console.log('change', newValue);
+  const [code, setCode] = useState('// write your JavaScript code here')
+  const [output, setOutput] = useState('')
+  const iframeRef = useRef<any>(null)
+
+  const handleChange = (newCode : any) => {
+    setCode(newCode)
+  }
+
+  const handleRun = () => {
+    const iframeWindow = iframeRef.current.contentWindow
+    iframeWindow.eval(code)
+    setOutput(iframeWindow.document.body.innerText)
   }
 
   return (
@@ -122,7 +131,13 @@ function DashboardContent() {
             >
               <MenuIcon />
             </IconButton>
-            <Typography component="h1" variant="h6" color="inherit" noWrap sx={{ flexGrow: 1 }}>
+            <Typography
+              component="h1"
+              variant="h6"
+              color="inherit"
+              noWrap
+              sx={{ flexGrow: 1 }}
+            >
               Dashboard
             </Typography>
             <IconButton color="inherit">
@@ -156,26 +171,39 @@ function DashboardContent() {
           component="main"
           sx={{
             backgroundColor: (theme) =>
-              theme.palette.mode === 'light' ? theme.palette.grey[100] : theme.palette.grey[900],
+              theme.palette.mode === 'light'
+                ? theme.palette.grey[100]
+                : theme.palette.grey[900],
             flexGrow: 1,
             height: '100vh',
             overflow: 'auto',
           }}
         >
           <Toolbar />
-          <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
-            <Grid container spacing={3}>
-              <AceEditor
-                mode="java"
-                theme="github"
-                onChange={onChange}
-                name="UNIQUE_ID_OF_DIV"
-                editorProps={{ $blockScrolling: true }}
-              />
-              , document.getElementById('example')
-            </Grid>
-            <Copyright sx={{ pt: 4 }} />
-          </Container>
+          <p>toto</p>
+          <AceEditor
+            mode='javascript'
+            theme='monokai'
+            onChange={handleChange}
+            value={code}
+            name='javascript-editor'
+            height='500px'
+            width='100%'
+            fontSize={14}
+            showPrintMargin={true}
+            showGutter={true}
+            highlightActiveLine={true}
+            setOptions={{
+              enableBasicAutocompletion: false,
+              enableLiveAutocompletion: false,
+              enableSnippets: false,
+              showLineNumbers: true,
+              tabSize: 2,
+            }}
+          />
+        <button onClick={handleRun}>Run</button>
+        <p>{output}</p>
+        <iframe title='output' ref={iframeRef} style={{ display: 'none' }} />
         </Box>
       </Box>
     </ThemeProvider>
