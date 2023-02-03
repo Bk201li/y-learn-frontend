@@ -18,6 +18,12 @@ import MenuIcon from '@mui/icons-material/Menu';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import NotificationsIcon from '@mui/icons-material/Notifications';
 import { mainListItems, secondaryListItems } from './components/ListItems';
+import { render } from 'react-dom';
+import brace from 'brace';
+import AceEditor from 'react-ace';
+
+import 'brace/mode/java';
+import 'brace/theme/github';
 
 function Copyright(props: any) {
   return (
@@ -79,7 +85,7 @@ const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' 
         },
       }),
     },
-  }),
+  })
 );
 
 const mdTheme = createTheme();
@@ -89,6 +95,10 @@ function DashboardContent() {
   const toggleDrawer = () => {
     setOpen(!open);
   };
+
+  function onChange(newValue:any) {
+    console.log('change', newValue);
+  }
 
   return (
     <ThemeProvider theme={mdTheme}>
@@ -112,13 +122,7 @@ function DashboardContent() {
             >
               <MenuIcon />
             </IconButton>
-            <Typography
-              component="h1"
-              variant="h6"
-              color="inherit"
-              noWrap
-              sx={{ flexGrow: 1 }}
-            >
+            <Typography component="h1" variant="h6" color="inherit" noWrap sx={{ flexGrow: 1 }}>
               Dashboard
             </Typography>
             <IconButton color="inherit">
@@ -152,9 +156,7 @@ function DashboardContent() {
           component="main"
           sx={{
             backgroundColor: (theme) =>
-              theme.palette.mode === 'light'
-                ? theme.palette.grey[100]
-                : theme.palette.grey[900],
+              theme.palette.mode === 'light' ? theme.palette.grey[100] : theme.palette.grey[900],
             flexGrow: 1,
             height: '100vh',
             overflow: 'auto',
@@ -163,7 +165,14 @@ function DashboardContent() {
           <Toolbar />
           <Container maxWidth="lg" sx={{ mt: 4, mb: 4 }}>
             <Grid container spacing={3}>
-
+              <AceEditor
+                mode="java"
+                theme="github"
+                onChange={onChange}
+                name="UNIQUE_ID_OF_DIV"
+                editorProps={{ $blockScrolling: true }}
+              />
+              , document.getElementById('example')
             </Grid>
             <Copyright sx={{ pt: 4 }} />
           </Container>
